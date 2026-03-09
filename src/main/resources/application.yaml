@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: ai-agent
+  ai:
+    openai:
+      api-key: <YOUR_API_KEY_STARTS_WITH_sk->
+      base-url: https://dashscope-intl.aliyuncs.com/compatible-mode
+      chat:
+        options:
+          model: qwen3.5-plus
+  profiles:
+    active: local
+server:
+  port: 8123
+  servlet:
+    context-path: /api
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+  group-configs:
+    - group: 'default'
+      paths-to-match: '/**'
+      packages-to-scan: com.book.aiagent.controller
+knife4j:
+  enable: true
+  setting:
+    language: en
