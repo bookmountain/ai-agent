@@ -1,0 +1,32 @@
+package com.book.aiagent;
+
+import jakarta.annotation.Resource;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.UUID;
+
+@SpringBootTest
+class LoveAppTest {
+
+    @Resource
+    private LoveApp loveApp;
+
+    @Test
+    void testChat() {
+        String chatId = UUID.randomUUID().toString();
+
+        String message = "Hi, my name is Book. I have been dating my partner for two years.";
+        String answer = loveApp.doChat(message, chatId);
+        Assertions.assertNotNull(answer);
+
+        message = "I want to make my partner feel more loved, but I am not very good at expressing affection. Give me three thoughtful ideas for this weekend.";
+        answer = loveApp.doChat(message, chatId);
+        Assertions.assertNotNull(answer);
+
+        message = "What is my name, and based on what I told you, what is one small romantic thing I could do today?";
+        answer = loveApp.doChat(message, chatId);
+        Assertions.assertNotNull(answer);
+    }
+}
