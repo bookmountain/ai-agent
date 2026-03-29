@@ -14,7 +14,7 @@ class LoveAppTest {
     private LoveApp loveApp;
 
     @Test
-    void testChat() {
+    void doChat() {
         String chatId = UUID.randomUUID().toString();
 
         String message = "Hi, my name is Book. I have been dating my partner for two years.";
@@ -28,5 +28,14 @@ class LoveAppTest {
         message = "What is my name, and based on what I told you, what is one small romantic thing I could do today?";
         answer = loveApp.doChat(message, chatId);
         Assertions.assertNotNull(answer);
+    }
+
+    @Test
+    void doChatWithReport() {
+        String chatId = UUID.randomUUID().toString();
+
+        String message = "Hi, my name is Book. I have been dating my partner for two years.";
+        LoveApp.LoveReport loveReport = loveApp.doChatWithReport(message, chatId);
+        Assertions.assertNotNull(loveReport);
     }
 }

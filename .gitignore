@@ -35,3 +35,4 @@ build/
 ### Custom ###
 application-local.yaml
 src/main/java/com/book/aiagent/demo/invoke/TestApiKey.java
+tmp
