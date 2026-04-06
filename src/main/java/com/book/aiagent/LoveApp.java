@@ -2,12 +2,16 @@ package com.book.aiagent;
 
 import com.book.aiagent.advisor.MyLoggerAdvisor;
 import com.book.aiagent.chatmemory.FileBasedChatMemory;
+import com.book.aiagent.rag.LoveAppRagCustomAdvisorFactory;
+import com.book.aiagent.rag.QueryRewriter;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
@@ -70,5 +74,35 @@ public class LoveApp {
         return loveReport;
     }
 
+//    @Resource
+//    private VectorStore pgVectorVectorStore;
 
+    @Resource
+    private VectorStore loveAppVectorStore;
+
+//    @Resource
+//    private Advisor loveAppRagCloudAdvisor;
+
+    @Resource
+    private QueryRewriter queryRewriter;
+
+
+    public String doChatWithRag(String message, String chatId) {
+        String rewrittenMessage = queryRewriter.doQueryRewrite(message);
+        ChatResponse chatResponse = chatClient.prompt().user(rewrittenMessage).advisors(spec -> spec.param(ChatMemory.CONVERSATION_ID, chatId))
+                .advisors(new MyLoggerAdvisor())
+//                .advisors(loveAppRagCloudAdvisor)
+//                .advisors(QuestionAnswerAdvisor.builder(pgVectorVectorStore).build())
+//                .advisors(QuestionAnswerAdvisor.builder(loveAppVectorStore).build())
+                .advisors(
+                        LoveAppRagCustomAdvisorFactory.createLoveAppRagCustomnAdvisor(loveAppVectorStore, "single")
+                )
+                .call()
+                .chatResponse();
+
+        assert chatResponse != null;
+        String content = chatResponse.getResult().getOutput().getText();
+        log.info("content: {}", content);
+        return content;
+    }
 }

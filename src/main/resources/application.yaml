@@ -8,6 +8,23 @@ spring:
       chat:
         options:
           model: qwen3.5-plus
+      embedding:
+        options:
+          model: text-embedding-v4
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        model: gemma3:1b
+    vectorstore:
+      pgvector:
+        index-type: HNSW
+        dimensions: 1024
+        distance-type: COSINE_DISTANCE
+        max-document-batch-size: 10
+  datasource:
+    url: jdbc:postgresql://<YOUR_ADDRESS>/postgres
+    username: <YOUR_USERNAME>
+    password: <YOUR_PASSWORD>
   profiles:
     active: local
 server:

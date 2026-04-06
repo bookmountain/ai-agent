@@ -66,11 +66,9 @@ public class MyLoggerAdvisor implements CallAdvisor, StreamAdvisor {
         private Builder() {
         }
 
-
         public MyLoggerAdvisor build() {
             return new MyLoggerAdvisor();
         }
-
     }
 
 }
