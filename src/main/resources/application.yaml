@@ -46,3 +46,5 @@ knife4j:
   enable: true
   setting:
     language: en
+search-api:
+  api-key: <YOUR_API_KEY_STARTS_WITH_sk->

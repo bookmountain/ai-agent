@@ -11,6 +11,7 @@ import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -30,7 +31,7 @@ public class LoveApp {
             "Your responses should be warm, sincere, and tailored to the user's specific situation and relationship.";
 
     public LoveApp(@Qualifier("openAiChatModel") ChatModel openAiChatModel) {
-        String fileDir = System.getProperty("user.dir") + "/tmp/chat-memory";
+        String fileDir = System.getProperty("user.dir") + "/tmp/ch at-memory";
         ChatMemory chatMemory = new FileBasedChatMemory(fileDir);
 //        ChatMemory chatMemory = MessageWindowChatMemory.builder()
 //                .maxMessages(MAX_MEMORY_MESSAGES)
@@ -97,6 +98,22 @@ public class LoveApp {
                 .advisors(
                         LoveAppRagCustomAdvisorFactory.createLoveAppRagCustomnAdvisor(loveAppVectorStore, "single")
                 )
+                .call()
+                .chatResponse();
+
+        assert chatResponse != null;
+        String content = chatResponse.getResult().getOutput().getText();
+        log.info("content: {}", content);
+        return content;
+    }
+
+    @Resource
+    private ToolCallback[] allTools;
+
+    public String doChatWithTools(String message, String chatId) {
+        ChatResponse chatResponse = chatClient.prompt().user(message).advisors(spec -> spec.param(ChatMemory.CONVERSATION_ID, chatId))
+                .advisors(new MyLoggerAdvisor())
+                .toolCallbacks(allTools)
                 .call()
                 .chatResponse();
 

@@ -45,4 +45,32 @@ class LoveAppTest {
         String answer = loveApp.doChatWithRag(message, chatId);
         Assertions.assertNotNull(answer);
     }
+
+    @Test
+    void doChatWithTools() {
+        // Test web search answers
+        testMessage("I want to take my girlfriend on a date in Shanghai this weekend. Recommend a few niche spots for couples.");
+
+        // Test web crawling: relationship conflict case analysis
+        testMessage("I recently argued with my partner. Check how other couples on Reddit  resolved similar conflicts.");
+
+        // Test resource download: image download
+        testMessage("Download a starry-sky couple wallpaper image directly to a file.");
+
+        // Test terminal operation: execute code
+        testMessage("Run a Python3 script to generate a data analysis report.");
+
+        // Test file operation: save user profile
+        testMessage("Save my relationship profile to a file.");
+
+        // Test PDF generation
+        testMessage("Generate a 'Qixi Date Plan' PDF including restaurant booking, activity schedule, and gift checklist.");
+    }
+
+    private void testMessage(String message) {
+        String chatId = UUID.randomUUID().toString();
+        String answer = loveApp.doChatWithTools(message, chatId);
+        Assertions.assertNotNull(answer);
+    }
+
 }

@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 import java.util.Map;
 
-@SpringBootTest
+@SpringBootTest(properties = "app.rag.pgvector.enabled=true")
 public class PgVectorVectorStoreConfigTest {
 
     @Resource
