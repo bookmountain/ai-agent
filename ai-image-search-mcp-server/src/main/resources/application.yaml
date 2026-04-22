@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: ai-image-search-mcp-server
+  config:
+    import: optional:classpath:application-local.yaml
+  profiles:
+    active: sse
+server:
+  port: 8127

@@ -21,6 +21,14 @@ spring:
         dimensions: 1024
         distance-type: COSINE_DISTANCE
         max-document-batch-size: 10
+    mcp:
+      client:
+        sse:
+          connections:
+            server1:
+              url: http://localhost:8127
+  #        stdio:
+  #          servers-configuration: classpath:mcp-servers.json
   datasource:
     url: jdbc:postgresql://<YOUR_ADDRESS>/postgres
     username: <YOUR_USERNAME>

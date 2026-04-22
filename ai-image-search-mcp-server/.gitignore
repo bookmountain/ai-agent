@@ -32,8 +32,6 @@ build/
 ### VS Code ###
 .vscode/
 
-### Custom ###
-application-local.yaml
-src/main/resources/mcp-servers.json
-src/main/java/com/book/aiagent/demo/invoke/TestApiKey.java
-tmp
+# Local secrets for Spring config import
+src/main/resources/application-local.yaml
+

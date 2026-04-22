@@ -64,7 +64,7 @@ class LoveAppTest {
         testMessage("Save my relationship profile to a file.");
 
         // Test PDF generation
-        testMessage("Generate a 'Qixi Date Plan' PDF including restaurant booking, activity schedule, and gift checklist.");
+        testMessage("Generate a 'Valentine's Date Plan' PDF including restaurant booking, activity schedule, and gift checklist.");
     }
 
     private void testMessage(String message) {
@@ -73,4 +73,17 @@ class LoveAppTest {
         Assertions.assertNotNull(answer);
     }
 
+    @Test
+    void doChatWithMcp() {
+        String chatId = UUID.randomUUID().toString();
+        // Test Google Maps MCP
+//        String message = "Please help me find a perfect restaurant for a romantic dinner in Adelaide CBD, and it should be available at 7 PM this Saturday.";
+//        String answer = loveApp.doChatWithMcp(message, chatId);
+//        Assertions.assertNotNull(answer);
+
+        // Test image search MCP
+        String message = "Help me search some gift ideas for my partner, and show me some images of those gifts.";
+        String answer = loveApp.doChatWithMcp(message, chatId);
+        Assertions.assertNotNull(answer);
+    }
 }

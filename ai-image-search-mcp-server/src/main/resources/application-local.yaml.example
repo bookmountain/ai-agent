@@ -1,0 +1,10 @@
+# Copy this file to application-local.yaml and fill in your real keys.
+# This file is imported automatically by src/main/resources/application.yaml.
+
+search-api:
+  api-key: "YOUR_PEXELS_API_KEY"
+
+# Add more private keys as your project grows, for example:
+# another-service:
+#   api-key: "YOUR_OTHER_KEY"
+
