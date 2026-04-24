@@ -20,4 +20,3 @@ public class WebSearchToolTest {
         Assertions.assertNotNull(result);
     }
 }
- 
