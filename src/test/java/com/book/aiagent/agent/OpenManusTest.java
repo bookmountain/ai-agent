@@ -4,6 +4,7 @@ import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @SpringBootTest
 class OpenManusTest {
@@ -17,7 +18,7 @@ class OpenManusTest {
                 My partner lives in Adelaide. Please help me find suitable date spots within 5 km,
                 and create a detailed dating plan that includes some web images,
                 then output it in PDF format.""";
-        String answer = openManus.run(userPrompt);
+        SseEmitter answer = openManus.runStream(userPrompt);
         Assertions.assertNotNull(answer);
     }
 }
