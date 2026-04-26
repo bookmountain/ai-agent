@@ -1,0 +1,25 @@
+services:
+  ai-agent-backend:
+    build: .
+    container_name: ai-agent-backend
+    env_file: .env
+    networks:
+      - ai-agent-net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  ai-agent-frontend:
+    build: ./ai-agent-frontend
+    container_name: ai-agent-frontend
+    ports:
+      - "3082:80"
+    depends_on:
+      - ai-agent-backend
+    networks:
+      - ai-agent-net
+    restart: unless-stopped
+
+networks:
+  ai-agent-net:
+    driver: bridge
