@@ -60,7 +60,7 @@ public abstract class BaseAgent {
                     currentStep = stepNumber;
                     log.info("Executing step " + stepNumber + "/" + maxSteps);
                     String stepResult = step();
-                    String result = "Step " + stepNumber + ": " + stepResult;
+                    String result = state == AgentState.FINISHED ? stepResult : "Step " + stepNumber + ": " + stepResult;
                     results.add(result);
                     sseEmitter.send(result);
                 }
@@ -70,6 +70,7 @@ public abstract class BaseAgent {
                     results.add("Terminated: Reached max steps (" + maxSteps + ")");
                     sseEmitter.send("Terminated: Reached max steps (" + maxSteps + ")");
                 }
+                sseEmitter.send("[DONE]");
                 sseEmitter.complete();
             } catch (Exception e) {
                 state = AgentState.ERROR;

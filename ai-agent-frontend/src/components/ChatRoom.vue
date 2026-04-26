@@ -11,7 +11,14 @@
             <AiAvatarFallback :type="aiType" />
           </div>
           <div class="message-bubble">
-            <div class="message-content">
+            <details v-if="msg.type === 'ai-reasoning'" class="reasoning-details">
+              <summary class="reasoning-summary">
+                <span>Reasoning</span>
+                <span class="reasoning-count">{{ reasoningLineCount(msg.content) }}</span>
+              </summary>
+              <div class="message-content reasoning-content">{{ msg.content }}</div>
+            </details>
+            <div v-else class="message-content">
               {{ msg.content }}
               <span v-if="connectionStatus === 'connecting' && index === messages.length - 1" class="typing-indicator">▋</span>
             </div>
@@ -88,6 +95,11 @@ const sendMessage = () => {
 const formatTime = (timestamp) => {
   const date = new Date(timestamp)
   return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+}
+
+const reasoningLineCount = (content) => {
+  const count = content.split('\n').filter(line => line.trim()).length
+  return count === 1 ? '1 step' : `${count} steps`
 }
 
 // Auto-scroll to the bottom
@@ -219,6 +231,39 @@ onMounted(() => {
   font-size: 16px;
   line-height: 1.5;
   white-space: pre-wrap;
+}
+
+.reasoning-details {
+  font-size: 14px;
+  color: var(--text-color-secondary);
+}
+
+.reasoning-summary {
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--text-color-secondary);
+  list-style-position: inside;
+}
+
+.reasoning-count {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-color-tertiary);
+}
+
+.reasoning-content {
+  max-width: min(72vw, 760px);
+  max-height: 240px;
+  margin-top: 8px;
+  overflow: auto;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-color-secondary);
+  word-break: break-word;
 }
 
 .message-time {

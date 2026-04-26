@@ -48,12 +48,55 @@ let eventSource = null
 
 // Add a message to the list
 const addMessage = (content, isUser, type = '') => {
-  messages.value.push({
+  const newMessage = {
     content,
     isUser,
     type,
     time: new Date().getTime()
-  })
+  }
+  messages.value.push(newMessage)
+  return newMessage
+}
+
+const appendToMessage = (message, content) => {
+  if (!message || !content.trim()) return
+  message.content = message.content ? `${message.content}\n\n${content}` : content
+  message.time = new Date().getTime()
+}
+
+const stripStepPrefix = (content) => {
+  return content.replace(/^Step\s+\d+\s*:\s*/i, '').trim()
+}
+
+const isReasoningEvent = (content) => {
+  const normalized = stripStepPrefix(content)
+  return /^Step\s+\d+\s*:/i.test(content)
+    || /^Tool\w+\s+returned result/i.test(normalized)
+    || normalized.startsWith('Tool')
+    || normalized.startsWith('Complete thinking, no action needed.')
+    || normalized === 'No tool calls to execute.'
+}
+
+const splitAgentEvent = (content) => {
+  const blocks = content
+    .split(/\n{2,}/)
+    .map(block => block.trim())
+    .filter(Boolean)
+
+  if (blocks.length <= 1) {
+    return isReasoningEvent(content)
+      ? { reasoning: [stripStepPrefix(content)], answers: [] }
+      : { reasoning: [], answers: [stripStepPrefix(content)] }
+  }
+
+  return blocks.reduce((result, block) => {
+    if (isReasoningEvent(block)) {
+      result.reasoning.push(stripStepPrefix(block))
+    } else {
+      result.answers.push(stripStepPrefix(block))
+    }
+    return result
+  }, { reasoning: [], answers: [] })
 }
 
 // Send a message
@@ -68,86 +111,45 @@ const sendMessage = (message) => {
   // Set the connection state
   connectionStatus.value = 'connecting'
   
-  // Temporary state
-  let messageBuffer = []; // Buffer SSE message chunks
-  let lastBubbleTime = Date.now(); // Timestamp of the previous bubble
-  let isFirstResponse = true; // Whether this is the first reply
-  
-  const sentenceEndPunctuation = ['.', '!', '?', '。', '！', '？', '…']; // Sentence-ending punctuation
-  const minBubbleInterval = 800; // Minimum delay between bubbles in ms
-  
-  // Create a message bubble
-  const createBubble = (content, type = 'ai-answer') => {
-    if (!content.trim()) return;
-    
-    // Add a small delay so replies feel more natural
-    const now = Date.now();
-    const timeSinceLastBubble = now - lastBubbleTime;
-    
-    if (isFirstResponse) {
-      // Show the first message immediately
-      addMessage(content, false, type);
-      isFirstResponse = false;
-    } else if (timeSinceLastBubble < minBubbleInterval) {
-      // Delay if the previous bubble was too recent
-      setTimeout(() => {
-        addMessage(content, false, type);
-      }, minBubbleInterval - timeSinceLastBubble);
-    } else {
-      // Otherwise add it right away
-      addMessage(content, false, type);
-    }
-    
-    lastBubbleTime = now;
-    messageBuffer = []; // Clear the buffer
-  };
+  let reasoningMessage = null
   
   eventSource = chatWithManus(message)
   
   // Listen for SSE messages
   eventSource.onmessage = (event) => {
-    const data = event.data
-    
-    if (data && data !== '[DONE]') {
-      messageBuffer.push(data);
-      
-      // Decide whether to create a new bubble
-      const combinedText = messageBuffer.join('');
-      
-      // Split on sentence boundaries or long chunks
-      const lastChar = data.charAt(data.length - 1);
-      const hasCompleteSentence = sentenceEndPunctuation.includes(lastChar) || data.includes('\n\n');
-      const isLongEnough = combinedText.length > 40;
-      
-      if (hasCompleteSentence || isLongEnough) {
-        createBubble(combinedText);
-      }
-    }
-    
+    const data = event.data?.trim()
+
     if (data === '[DONE]') {
-      // Flush any remaining buffered text
-      if (messageBuffer.length > 0) {
-        const remainingContent = messageBuffer.join('');
-        createBubble(remainingContent, 'ai-final');
-      }
-      
-      // Close the connection when complete
       connectionStatus.value = 'disconnected'
       eventSource.close()
+      return
     }
+
+    if (!data) {
+      return
+    }
+
+    const { reasoning, answers } = splitAgentEvent(data)
+
+    if (reasoning.length > 0) {
+      if (!reasoningMessage) {
+        reasoningMessage = addMessage('', false, 'ai-reasoning')
+      }
+      reasoning.forEach(item => appendToMessage(reasoningMessage, item))
+    }
+
+    answers.forEach(answer => addMessage(answer, false, 'ai-final'))
   }
   
   // Listen for SSE errors
   eventSource.onerror = (error) => {
     console.error('SSE Error:', error)
+    if (eventSource?.readyState === EventSource.CLOSED) {
+      connectionStatus.value = 'disconnected'
+      return
+    }
     connectionStatus.value = 'error'
     eventSource.close()
-    
-    // Flush buffered text even if an error occurs
-    if (messageBuffer.length > 0) {
-      const remainingContent = messageBuffer.join('');
-      createBubble(remainingContent, 'ai-error');
-    }
   }
 }
 

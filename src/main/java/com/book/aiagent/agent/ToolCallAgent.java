@@ -29,6 +29,7 @@ public class ToolCallAgent extends ReActAgent {
     private final ToolCallback[] availableTools;
     private ChatResponse toolCallChatResponse;
     private ToolCallingManager toolCallingManager;
+    private String finalResponse;
 
     private final ChatOptions chatOptions;
 
@@ -76,8 +77,11 @@ public class ToolCallAgent extends ReActAgent {
 
             if (toolCallList.isEmpty()) {
                 getMessageList().add(assistantMessage);
+                this.finalResponse = StrUtil.blankToDefault(result, "Done.");
+                setState(AgentState.FINISHED);
                 return false;
             } else {
+                this.finalResponse = result;
                 return true;
             }
         } catch (Exception e) {
@@ -96,16 +100,35 @@ public class ToolCallAgent extends ReActAgent {
         ToolExecutionResult toolExecutionResult = toolCallingManager.executeToolCalls(prompt, toolCallChatResponse);
         setMessageList(toolExecutionResult.conversationHistory());
         ToolResponseMessage toolResponseMessage = (ToolResponseMessage) CollUtil.getLast(toolExecutionResult.conversationHistory());
-        // Determine if it has used the terminate tool
         boolean terminateToolCalled = toolResponseMessage.getResponses().stream()
                 .anyMatch(response -> response.name().equals("doTerminate"));
-        if (terminateToolCalled) {
+        if (terminateToolCalled && StrUtil.isNotBlank(finalResponse)) {
             setState(AgentState.FINISHED);
+            return finalResponse;
+        }
+        if (terminateToolCalled && toolResponseMessage.getResponses().size() == 1) {
+            setState(AgentState.FINISHED);
+            return "Done.";
         }
         String results = toolResponseMessage.getResponses().stream()
+                .filter(response -> !response.name().equals("doTerminate"))
                 .map(response -> "Tool" + response.name() + " returned result：" + response.responseData())
                 .collect(Collectors.joining("\n"));
         log.info(results);
         return results;
+    }
+
+    @Override
+    public String step() {
+        try {
+            boolean shouldAct = think();
+            if (!shouldAct) {
+                return StrUtil.blankToDefault(finalResponse, "Done.");
+            }
+            return act();
+        } catch (Exception e) {
+            log.error("Step execution failed", e);
+            return "Step execution failed：" + e.getMessage();
+        }
     }
 }
