@@ -8,6 +8,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -85,8 +86,8 @@ public class LoveApp {
         return loveReport;
     }
 
-//    @Resource
-//    private VectorStore pgVectorVectorStore;
+    @Resource
+    private VectorStore pgVectorVectorStore;
 
     @Resource
     private VectorStore loveAppVectorStore;
@@ -103,8 +104,8 @@ public class LoveApp {
         ChatResponse chatResponse = chatClient.prompt().user(rewrittenMessage).advisors(spec -> spec.param(ChatMemory.CONVERSATION_ID, chatId))
                 .advisors(new MyLoggerAdvisor())
 //                .advisors(loveAppRagCloudAdvisor)
-//                .advisors(QuestionAnswerAdvisor.builder(pgVectorVectorStore).build())
 //                .advisors(QuestionAnswerAdvisor.builder(loveAppVectorStore).build())
+                .advisors(QuestionAnswerAdvisor.builder(pgVectorVectorStore).build())
                 .advisors(
                         LoveAppRagCustomAdvisorFactory.createLoveAppRagCustomnAdvisor(loveAppVectorStore, "single")
                 )

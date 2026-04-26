@@ -21,6 +21,9 @@ import static org.springframework.ai.vectorstore.pgvector.PgVectorStore.PgIndexT
 @Configuration
 @ConditionalOnProperty(name = "app.rag.pgvector.enabled", havingValue = "true")
 public class PgVectorVectorStoreConfig {
+    private static final String DEFAULT_SCHEMA = "public";
+    private static final String DEFAULT_TABLE = "vector_store";
+
     @Resource
     private LoveAppDocumentLoader loveAppDocumentLoader;
 
@@ -29,6 +32,15 @@ public class PgVectorVectorStoreConfig {
     @Value("${spring.ai.vectorstore.pgvector.dimensions}")
     private int dimensions;
 
+    @Value("${app.rag.pgvector.initialize-schema:true}")
+    private boolean initializeSchema;
+
+    @Value("${app.rag.pgvector.seed-on-startup:false}")
+    private boolean seedOnStartup;
+
+    @Value("${app.rag.pgvector.seed-if-empty-only:true}")
+    private boolean seedIfEmptyOnly;
+
     @Bean
     public VectorStore pgVectorVectorStore(JdbcTemplate jdbcTemplate,
                                            @Qualifier("openAiEmbeddingModel") EmbeddingModel embeddingModel) {
@@ -36,17 +48,33 @@ public class PgVectorVectorStoreConfig {
                 .dimensions(dimensions)              // Required: dimensions of the embedding vectors
                 .distanceType(COSINE_DISTANCE)       // Optional: defaults to COSINE_DISTANCE
                 .indexType(HNSW)                     // Optional: defaults to HNSW
-                .initializeSchema(true)              // Optional: defaults to false
-                .schemaName("public")                // Optional: defaults to "public"
-                .vectorTableName("vector_store")     // Optional: defaults to "vector_store"
+                .initializeSchema(initializeSchema)  // Optional: defaults to false
+                .schemaName(DEFAULT_SCHEMA)          // Optional: defaults to "public"
+                .vectorTableName(DEFAULT_TABLE)      // Optional: defaults to "vector_store"
                 .batchingStrategy(this::batchDocumentsForEmbedding)
                 .maxDocumentBatchSize(maxDocumentBatchSize)
                 .build();
 
         vectorStore.afterPropertiesSet();
-        List<Document> documents = loveAppDocumentLoader.loadMarkdowns();
-        vectorStore.add(documents);
+        if (shouldSeedOnStartup(jdbcTemplate)) {
+            List<Document> documents = loveAppDocumentLoader.loadMarkdowns();
+            vectorStore.add(documents);
+        }
         return vectorStore;
+    }
+
+    private boolean shouldSeedOnStartup(JdbcTemplate jdbcTemplate) {
+        if (!seedOnStartup) {
+            return false;
+        }
+        if (!seedIfEmptyOnly) {
+            return true;
+        }
+        Long count = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM " + DEFAULT_SCHEMA + "." + DEFAULT_TABLE,
+                Long.class
+        );
+        return count == null || count == 0;
     }
 
     private List<List<Document>> batchDocumentsForEmbedding(List<Document> documents) {

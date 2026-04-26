@@ -56,3 +56,11 @@ knife4j:
     language: en
 search-api:
   api-key: <YOUR_API_KEY_STARTS_WITH_sk->
+
+app:
+  rag:
+    pgvector:
+      initialize-schema: true
+      seed-on-startup: false
+      seed-if-empty-only: true
+
