@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: ai-agent
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      base-url: https://dashscope-intl.aliyuncs.com/compatible-mode
+      chat:
+        options:
+          model: qwen-max
+      embedding:
+        options:
+          model: text-embedding-v4
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        model: gemma3:1b
+    vectorstore:
+      pgvector:
+        index-type: HNSW
+        dimensions: 1024
+        distance-type: COSINE_DISTANCE
+        max-document-batch-size: 10
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+server:
+  port: 8123
+  servlet:
+    context-path: /api
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+  group-configs:
+    - group: 'default'
+      paths-to-match: '/**'
+      packages-to-scan: com.book.aiagent.controller
+knife4j:
+  enable: true
+  setting:
+    language: en
+search-api:
+  api-key: ${SEARCH_API_KEY}
+app:
+  rag:
+    pgvector:
+      enabled: true
+      initialize-schema: true
+      seed-on-startup: false
+      seed-if-empty-only: true
+logging:
+  level:
+    org.springframework.ai: INFO
