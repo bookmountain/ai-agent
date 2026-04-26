@@ -11,7 +11,7 @@ public class HttpAiInvoke {
         // 1. Use the INTERNATIONAL OpenAI-compatible endpoint
         String url = DashScopeIntlUrl.URL;
 
-        String apiKey = TestApiKey.API_KEY;
+        String apiKey = System.getenv("OPENAI_API_KEY");
 
         // 2. Build the JSON request body using Hutool's modern .set() method
         JSONObject requestBody = new JSONObject();

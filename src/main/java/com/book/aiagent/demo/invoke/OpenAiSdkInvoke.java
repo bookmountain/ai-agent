@@ -12,7 +12,7 @@ public class OpenAiSdkInvoke {
 
     public static void main(String[] args) {
         OpenAIClient client = OpenAIOkHttpClient.builder()
-                .apiKey(TestApiKey.API_KEY)
+                .apiKey(System.getenv("OPENAI_API_KEY"))
                 .baseUrl(DashScopeIntlUrl.URL)
                 .build();
 
