@@ -1,0 +1,31 @@
+name: Deploy to vm100
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Write .env
+        run: |
+          cat > .env << 'EOF'
+          OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+          DB_URL=${{ secrets.DB_URL }}
+          DB_USERNAME=${{ secrets.DB_USERNAME }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          SEARCH_API_KEY=${{ secrets.SEARCH_API_KEY }}
+          EOF
+
+      - name: Deploy
+        run: docker compose up --build -d
+
+      - name: Remove .env
+        if: always()
+        run: rm -f .env
