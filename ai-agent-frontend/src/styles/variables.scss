@@ -1,0 +1,152 @@
+// Color variables
+:root {
+  // Brand colors
+  --primary-color: #275fa8;
+  --primary-color-light: #3f7cc8;
+  --primary-color-dark: #1a477f;
+  --secondary-color: #28745f;
+  --accent-color: #b24a5a;
+  --warning-color: #c5831f;
+  
+  // Neutral colors
+  --white: #ffffff;
+  --black: #000000;
+  --gray-50: #f7f8fa;
+  --gray-100: #eef1f5;
+  --gray-200: #dde4ec;
+  --gray-300: #c9d3df;
+  --gray-400: #9aa9ba;
+  --gray-500: #6e7f91;
+  --gray-600: #526273;
+  --gray-700: #374454;
+  --gray-800: #26313f;
+  --gray-900: #151c26;
+  
+  // Text colors
+  --text-color-primary: var(--gray-900);
+  --text-color-secondary: var(--gray-700);
+  --text-color-tertiary: var(--gray-500);
+  --text-color-disabled: var(--gray-400);
+  --text-color-inverse: var(--white);
+  --text-color-on-primary: var(--white);
+  
+  // Background colors
+  --background-color: var(--white);
+  --background-color-secondary: var(--gray-50);
+  --background-color-tertiary: var(--gray-100);
+  --background-color-elevated: var(--white);
+  
+  // Border colors
+  --border-color: var(--gray-300);
+  --border-color-light: var(--gray-200);
+  --border-color-dark: var(--gray-400);
+  
+  // Shadows
+  --shadow-sm: 0 1px 2px rgba(21, 28, 38, 0.06);
+  --shadow-md: 0 10px 28px rgba(21, 28, 38, 0.08);
+  --shadow-lg: 0 18px 44px rgba(21, 28, 38, 0.12);
+  --shadow-xl: 0 24px 60px rgba(21, 28, 38, 0.16);
+  
+  // Scrollbars
+  --scrollbar-track: var(--gray-100);
+  --scrollbar-thumb: var(--gray-400);
+  --scrollbar-thumb-hover: var(--gray-500);
+  
+  // Cyberpunk accent colors
+  --cyber-blue: #00f0ff;
+  --cyber-purple: #9000ff;
+  --cyber-pink: #ff00d4;
+  --cyber-green: #00ff88;
+  --cyber-black: #0a0a12;
+  --cyber-dark: #111122;
+  --cyber-light: #edf7ff;
+  --neon-blue: var(--cyber-blue);
+  --neon-purple: var(--cyber-purple);
+  --neon-pink: var(--cyber-pink);
+  --neon-blue-rgb: 0, 240, 255;
+}
+
+// Font variables
+:root {
+  --font-family-base: 'Inter', 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+  
+  --font-size-xs: 0.75rem;    // 12px
+  --font-size-sm: 0.875rem;   // 14px
+  --font-size-base: 1rem;     // 16px
+  --font-size-lg: 1.125rem;   // 18px
+  --font-size-xl: 1.25rem;    // 20px
+  --font-size-2xl: 1.5rem;    // 24px
+  --font-size-3xl: 1.875rem;  // 30px
+  --font-size-4xl: 2.25rem;   // 36px
+  --font-size-5xl: 3rem;      // 48px
+  
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --line-height-loose: 2;
+  
+  --line-height-base: var(--line-height-normal);
+}
+
+// Spacing variables
+:root {
+  --spacing-0: 0;
+  --spacing-1: 0.25rem;   // 4px
+  --spacing-2: 0.5rem;    // 8px
+  --spacing-3: 0.75rem;   // 12px
+  --spacing-4: 1rem;      // 16px
+  --spacing-5: 1.25rem;   // 20px
+  --spacing-6: 1.5rem;    // 24px
+  --spacing-8: 2rem;      // 32px
+  --spacing-10: 2.5rem;   // 40px
+  --spacing-12: 3rem;     // 48px
+  --spacing-16: 4rem;     // 64px
+  --spacing-20: 5rem;     // 80px
+  --spacing-24: 6rem;     // 96px
+  --spacing-32: 8rem;     // 128px
+}
+
+// Border radius variables
+:root {
+  --border-radius-none: 0;
+  --border-radius-sm: 0.125rem;   // 2px
+  --border-radius-base: 0.25rem;  // 4px
+  --border-radius-md: 0.375rem;   // 6px
+  --border-radius-lg: 0.5rem;     // 8px
+  --border-radius-xl: 0.75rem;    // 12px
+  --border-radius-2xl: 1rem;      // 16px
+  --border-radius-3xl: 1.5rem;    // 24px
+  --border-radius-full: 9999px;
+}
+
+// Transition variables
+:root {
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 350ms ease;
+  
+  --transition-all: all var(--transition-base);
+  --transition-colors: color var(--transition-base), background-color var(--transition-base), border-color var(--transition-base);
+  --transition-transform: transform var(--transition-base);
+  --transition-opacity: opacity var(--transition-base);
+}
+
+// Z-index layers
+:root {
+  --z-index-dropdown: 1000;
+  --z-index-sticky: 1020;
+  --z-index-fixed: 1030;
+  --z-index-modal-backdrop: 1040;
+  --z-index-modal: 1050;
+  --z-index-popover: 1060;
+  --z-index-tooltip: 1070;
+  --z-index-toast: 1080;
+}

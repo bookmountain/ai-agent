@@ -34,6 +34,7 @@ build/
 
 ### Custom ###
 application-local.yaml
+application-prod.yaml
 src/main/resources/mcp-servers.json
 src/main/java/com/book/aiagent/demo/invoke/TestApiKey.java
 tmp
